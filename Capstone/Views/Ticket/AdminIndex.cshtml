@@ -1,0 +1,146 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model Capstone.Models.UserDashboardModel
+
+
+@{
+    ViewData["Title"] = "Admin Dashboard";
+
+}
+
+<div>
+    <h1> Administrator @Html.DisplayFor(model => model.FirstName)'s Dashboard [@Html.DisplayFor(model => model.Id)]</h1>
+    <div class="text-center">
+        <h1 class="display-4"></h1>
+        <a class="btn btn-primary" asp-area="" asp-controller="Ticket" asp-action="CreateTicket">Create a Ticket</a>
+    </div>
+</div>
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h5>Assigned Ticket List: @Model.AdminTickets?.Count</h5>
+        </div>
+        <div class="card-body" style="max-height: 500px; overflow-y: auto;">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Ticket ID</th>
+                        <th>Creation Date</th>
+                        <th>Subject</th>
+                        <th>Admin ID</th>
+                        <th>Last Timestamp</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var ticket in Model.AdminTickets)
+                    {
+                        <tr>
+                            <td>@ticket.Id</td>
+                            <td>@ticket.CreationDate.ToString("yyyy-MM-dd")</td>
+                            <td>@ticket.Subject</td>
+                            <td>@(ticket.AdminId?.ToString() ?? "N/A")</td>
+                            <td>@(ticket.LastUpdate?.ToString("yyyy-MM-dd") ?? "N/A")</td>
+                            <td>
+                                <a href="@Url.Action("EditTicketAdmin", "Ticket", new { id = ticket.Id })" class="btn btn-sm btn-outline-primary">View</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h5>Unassigned Ticket List: @Model.UnassignedTickets?.Count</h5>
+        </div>
+        <div class="card-body" style="max-height: 500px; overflow-y: auto;">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Ticket ID</th>
+                        <th>Creation Date</th>
+                        <th>Subject</th>
+                        <th>Admin ID</th>
+                        <th>Last Timestamp</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var ticket in Model.UnassignedTickets)
+                    {
+                        <tr>
+                            <td>@ticket.Id</td>
+                            <td>@ticket.CreationDate.ToString("yyyy-MM-dd")</td>
+                            <td>@ticket.Subject</td>
+                            <td>@(ticket.AdminId?.ToString() ?? "N/A")</td>
+                            <td>@(ticket.LastUpdate?.ToString("yyyy-MM-dd") ?? "N/A")</td>
+                            <td>
+                                <form asp-action="AssignAdmin" asp-controller="Ticket" method="post" class="d-flex" style="gap: 0.5rem;">
+                                    <input type="hidden" name="id" value="@ticket.Id" />
+                                    <input type="number" name="adminId" placeholder="Admin ID" class="form-control form-control-sm" style="width: 80px;" required />
+                                    <button type="submit" class="btn btn-sm btn-outline-success">Assign</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h5>My Ticket List: @Model.Tickets?.Count</h5>
+        </div>
+        <div class="card-body" style="max-height: 500px; overflow-y: auto;">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Ticket ID</th>
+                        <th>Creation Date</th>
+                        <th>Subject</th>
+                        <th>Admin ID</th>
+                        <th>Last Timestamp</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var ticket in Model.Tickets)
+                    {
+                        <tr>
+                            <td>@ticket.Id</td>
+                            <td>@ticket.CreationDate.ToString("yyyy-MM-dd")</td>
+                            <td>@ticket.Subject</td>
+                            <td>@(ticket.AdminId?.ToString() ?? "N/A")</td>
+                            <td>@(ticket.LastUpdate?.ToString("yyyy-MM-dd") ?? "N/A")</td>
+                            <td>
+                                <a href="@Url.Action("EditTicketAdmin", "Ticket", new { id = ticket.Id })" class="btn btn-sm btn-outline-primary">View</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    @if (TempData["Message"] != null)
+    {
+        <script>
+            window.addEventListener("DOMContentLoaded", function () {
+                alert("@TempData["Message"]");
+            });
+        </script>
+    }
+}
+
